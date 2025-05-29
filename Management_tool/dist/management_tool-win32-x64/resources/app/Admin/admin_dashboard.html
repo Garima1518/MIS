@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="admin_dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+
+</head>
+<style>
+  /* Container for the cards section */
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    margin: 20px;
+  }
+
+  /* Individual card styling */
+  .card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 48%;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .card h3 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #333;
+  }
+
+  .card p {
+    font-size: 1.1rem;
+    color: #666;
+  }
+
+  /* Hover effect for the cards */
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Full-width card for task details */
+  .card.full-width {
+    width: 100%;
+    box-shadow: none;
+    /* Remove shadow for the full-width card */
+    padding: 30px;
+    background-color: #f7f9fc;
+    border-radius: 8px;
+  }
+
+  /* Task details section styling */
+  #taskDetailsSection {
+    display: none;
+    /* Hidden by default */
+    margin-top: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f4f7fb, #e3e7f0);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  #taskDetailsTitle {
+    font-size: 1.5rem;
+    color: #2d3a3b;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  /* Table styling for task details */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  table th,
+  table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 1.1rem;
+    color: #555;
+  }
+
+  table th {
+    background-color: #182848;
+    color: #fff;
+    font-weight: 500;
+  }
+
+  table td {
+    background-color: #f9f9f9;
+  }
+
+  table tr:nth-child(even) {
+    background-color: #f1f1f1;
+  }
+
+  table tr:hover {
+    background-color: #e1e4e8;
+  }
+
+  /* Hover effect for table rows */
+  table tr:hover td {
+    cursor: pointer;
+    color: #333;
+  }
+
+  /* Media query for responsiveness */
+  @media (max-width: 768px) {
+    .card {
+      width: 100%;
+    }
+
+    table th,
+    table td {
+      font-size: 0.9rem;
+    }
+  }
+</style>
+
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>Admin</h2>
+      <ul>
+       
+        <li class="active" onclick="showSection('dashboardSection', this)">Dashboard</li>
+        <li onclick="showSection('usersSection', this)">Users</li>
+        <li onclick="alert('Still in implementation')">Projects</li>
+
+        <li onclick="alert('Still in implementation')">Analytics</li>
+
+        <li onclick="showLogoutModal()">Logout</li>
+      </ul>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+      <!-- Top navbar -->
+      <nav class="navbar">
+        <div class="navbar-left">
+        </div>
+      </nav>
+
+      <!-- DASHBOARD SECTION -->
+      <section id="dashboardSection" class="section">
+        <div class="cards">
+          <div class="card">
+            <h3>Total Users</h3>
+            <p id="totalUsers">Loading...</p>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <p id="activeProjects">Loading...</p>
+          </div>
+
+          <!-- Blocked Tasks Card -->
+          <div class="card" onclick="showTaskDetails('blocked')">
+            <h3>Blocked Tasks</h3>
+            <p id="blockedTasks">Loading...</p>
+          </div>
+
+          <!-- Delayed Tasks Card -->
+          <div class="card" onclick="showTaskDetails('delayed')">
+            <h3>Delayed Tasks</h3>
+            <p id="delayedTasks">Loading...</p>
+          </div>
+        </div>
+
+        <!-- Task Details Section -->
+        <div class="cards" style="margin-top: 30px; display: none;" id="taskDetailsSection">
+          <div class="card full-width">
+            <h3 id="taskDetailsTitle">Task Details</h3>
+            <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr>
+                  <th>Project</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                  <th>Utilized Hour</th>
+                </tr>
+              </thead>
+              <tbody id="taskDetailsBody">
+                <!-- Tasks will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div style="display: flex; justify-content: space-between; margin: 20px;">
+          <!-- Software Development Bar Chart -->
+          <div style="width: 48%; height: 450px; overflow: hidden;">
+            <canvas id="softwareBarChart" width="1200" height="400"></canvas>
+          </div>
+
+          <!-- Mechanical Bar Chart -->
+          <div style="width: 48%; height: 450px; overflow: hidden;">
+            <canvas id="mechanicalBarChart" width="1200" height="400"></canvas>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin: 20px;">
+          <div style="width: 48%; height: 450px; overflow: hidden;">
+            <canvas id="statusHorizontalBarChart" width="1200" height="400"></canvas>
+          </div>
+
+          <!-- Mechanical Horizontal Status Bar Chart -->
+          <div style="width: 48%; height: 450px; overflow: hidden; margin: 20px;">
+            <canvas id="mechanicalStatusHorizontalBarChart" width="1200" height="400"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- USERS SECTION -->
+      <section id="usersSection" class="section hidden">
+        <h1>All Users Data</h1>
+        <div class="search-container">
+          <input type="text" id="userSearchInput" placeholder="Search user by name..." />
+          <div id="noUserFoundMessage" style="display: none; color: red; font-weight: bold;">
+            No user found 
+          </div>
+          
+        </div>
+
+        <div class="button-group">
+          <button id="generateTimesheetPivot">📊 All Users Timesheet</button>
+          <button id="generateDailyPivot">🗓️ All Users Dailysheet</button>
+        </div>
+
+        <div id="container" class="all-users-container"></div>
+        <div class="user-container" id="userDropdownContainer"></div>
+      </section>
+
+      <!-- <section id="projectsSection" class="hidden">
+        <h2>Project List</h2>
+        
+        <form id="projectForm">
+          <input type="text" id="projectName" placeholder="Project Name" required />
+          <input type="text" id="themeNumber" placeholder="Entity(UA/MAE/Internal)" />
+          <input type="text" id="category" placeholder="Work(SW/Mechanical/CAE/Others)" required />
+          <button type="submit" id="submitBtn">Add Project</button>
+        </form>
+        <table id="projectTable">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>Entity(UA/MAE/Internal)</th>
+              <th>Work(SW/Mechanical/CAE/Others)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>CAE-Japan</td>
+              <td>ZKL_K7103</td>
+              <td>UA(Mech)</td>
+            </tr>
+            <tr>
+              <td>CAE</td>
+              <td></td>
+              <td>UA(Mech)</td>
+            </tr>
+            <tr>
+              <td>Flush Handle Support to Italy</td>
+              <td>ZII_Z7108</td>
+              <td>MAE(Mech)</td>
+            </tr>
+            <tr>
+              <td>Support To Erdweg</td>
+              <td></td>
+              <td>MAE(Mech)</td>
+            </tr>
+            <tr>
+              <td>DEP</td>
+              <td>Z16_P4101</td>
+              <td>UA(Mech)</td>
+            </tr>
+            <tr>
+              <td>Audi E-Wing</td>
+              <td></td>
+              <td>MAE(Mech)</td>
+            </tr>
+            <tr>
+              <td>Mahindra Demo vehicle</td>
+              <td>ZII_Z7105</td>
+              <td>UA(Mech)</td>
+            </tr>
+            <tr>
+              <td>Power Rotative Door</td>
+              <td>ZII_Z7102</td>
+              <td>UA(Mech)</td>
+            </tr>
+            <tr>
+              <td>Handle Competence -UA</td>
+              <td></td>
+              <td>UA(Mech)</td>
+            </tr>
+            <tr>
+              <td>Catia Training</td>
+              <td>ZII_Z7104</td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>ISO/Quality Systems</td>
+              <td>ZII_Z7106</td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>Marketing - Business Management/Integration</td>
+              <td></td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>Functional Safety Related Activity</td>
+              <td></td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>Cyber-Security Related Activity</td>
+              <td></td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>IATF and ISO Certification</td>
+              <td></td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>Management</td>
+              <td></td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>Patent Search</td>
+              <td></td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>Each System Management</td>
+              <td></td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>Various Management/General Affairs</td>
+              <td></td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>Common Engine</td>
+              <td></td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>UBSW Project</td>
+              <td></td>
+              <td>MAE(SW)</td>
+            </tr>
+            <tr>
+              <td>Software UA</td>
+              <td>Z4K_Z7102</td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>Software MAE</td>
+              <td></td>
+              <td>UA(Internal)</td>
+            </tr>
+            <tr>
+              <td>DigiKey</td>
+              <td></td>
+              <td>UA(SW)</td>
+            </tr>
+            <tr>
+              <td>E- Mirror OB</td>
+              <td></td>
+              <td>UA(SW)</td>
+            </tr>
+            <tr>
+              <td>NFC</td>
+              <td></td>
+              <td>MAE(SW)</td>
+            </tr>
+            <tr>
+              <td>E- Mirror QT GUI</td>
+              <td></td>
+              <td>UA(SW)</td>
+            </tr>
+            <tr>
+              <td>J34X_HC</td>
+              <td></td>
+              <td>UA(SW)</td>
+            </tr>
+            <tr>
+              <td>BSW</td>
+              <td></td>
+              <td>MAE(SW)</td>
+            </tr>
+            <tr>
+              <td>J4U</td>
+              <td></td>
+              <td>MAE(SW)</td>
+            </tr>
+            <tr>
+              <td>Mobile Access-eDoor</td>
+              <td>ZII_Z8102</td>
+              <td>UA(SW)</td>
+            </tr>
+            <tr>
+              <td>AutoSAR- UA</td>
+              <td></td>
+              <td>UA(SW)</td>
+            </tr>
+            <tr>
+              <td>AutoSAR- MAE</td>
+              <td></td>
+              <td>MAE(SW)</td>
+            </tr>
+            <tr>
+              <td>SW Competence-UA</td>
+              <td></td>
+              <td>UA(SW)</td>
+            </tr>
+            <tr>
+              <td>C70 St Switch</td>
+              <td>C70_BX101</td>
+              <td>UA(Mech)</td>
+            </tr>
+            <tr>
+              <td>BMW-XNF</td>
+              <td></td>
+              <td>MAE(SW)</td>
+            </tr>
+            <tr>
+              <td>E-mirror</td>
+              <td></td>
+              <td>UA(SW)</td>
+            </tr>
+            <tr>
+              <td>5K45_HC</td>
+              <td></td>
+              <td>UA(SW)</td>
+            </tr>
+            <tr>
+              <td>VK00-HC</td>
+              <td></td>
+              <td>UA(SW)</td>
+            </tr>
+            <tr>
+              <td>Audi e-Ring</td>
+              <td></td>
+              <td>MAE(SW)</td>
+            </tr>
+            <tr>
+              <td>5K45_HC_REAR</td>
+              <td></td>
+              <td>UA(SW)</td>
+            </tr>
+            <tr>
+              <td>5K45_HC_Front</td>
+              <td></td>
+              <td>UA(SW)</td>
+            </tr>
+            <tr>
+              <td>DevOps and Tools</td>
+              <td></td>
+              <td>UA(SW)</td>
+            </tr>
+          </tbody>
+        </table>
+      </section> -->
+
+
+      <!-- <section id="analyticsSection" class="hidden">
+        <h2>Project Summary Table</h2>
+
+        
+        <div style="margin-bottom: 15px;">
+          <label for="projectSelect"><strong>Select Project:</strong></label>
+          <select id="projectSelect">
+            <option value="">-- Select Project --</option>
+          </select>
+          <input type="text" id="employeeInput" placeholder="Enter employee name" />
+          <button onclick="addEmployee()">Add Employee</button>
+        </div>
+
+  
+        <div style="margin-bottom: 15px;">
+          <input type="text" id="newProjectInput" placeholder="New project name" />
+
+          <button onclick="addProject()">Add Project</button>
+        </div>
+
+        <div id="projectDisplay" style="margin-top: 20px;"></div>
+
+        
+        <div class="pivot-table-wrapper">
+          <table class="pivot-table">
+            <thead>
+              <tr>
+                <th>Sum of Sum</th>
+                <th colspan="17">Column Labels</th>
+                <th class="highlight" rowspan="1">Grand Total</th>
+                <th class="highlight" colspan="2">Project Info</th>
+              </tr>
+              <tr>
+                <th>Row Labels</th>
+                <th>1A</th>
+                <th>2A</th>
+                <th>2B</th>
+                <th>2C</th>
+                <th>2D</th>
+                <th>2E</th>
+                <th>2F</th>
+                <th>2G</th>
+                <th>2I</th>
+                <th>2J</th>
+                <th>3I</th>
+                <th>6B</th>
+                <th>6E</th>
+                <th>8A</th>
+                <th>8C</th>
+                <th>8E</th>
+                <th>8G</th>
+              </tr>
+            </thead>
+            <tbody id="summaryBody">
+              <tr>
+                <td>Project XYZ</td>
+                <td>5</td>
+                <td>4</td>
+                <td>2</td>
+                <td>3</td>
+                <td>0</td>
+                <td>6</td>
+                <td>4</td>
+                <td>1</td>
+                <td>5</td>
+                <td>3</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>2</td>
+                <td>2</td>
+                <td>1</td>
+                <td>2</td>
+                <td class="highlight">49</td>
+                <td class="highlight">UA</td>
+                <td class="highlight">SW</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section> -->
+
+      <div class="modal" id="logoutModal">
+        <div class="modal-content">
+          <div class="lock-icon-wrapper">
+            🔒
+          </div>
+          <h2 class="modal-heading">Logout Confirmation</h2>
+          <p class="modal-subtext">Are you sure you want to logout?</p>
+          <button onclick="confirmLogout()">✅ Yes, Logout</button>
+          <button onclick="closeLogoutModal()" class="cancel-btn">❌ Cancel</button>
+        </div>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.full.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+      <script src="admin_dashboard.js"></script>
+
+</body>
+
+</html>

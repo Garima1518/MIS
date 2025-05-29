@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Login | MinebeaMitsumi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="public/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="public/css/slick.css" />
+    <link rel="stylesheet" href="public/css/tooplate-simply-amazed.css" />
+    <link rel="stylesheet" href="public/css/dashboard.css" />
+  </head>
+  <body>
+    <section
+      class="gallery-section section parallax-window"
+      data-parallax="scroll"
+      data-image-src="public/img/section-3-bg.jpg"
+      id="section-3"
+    >
+      <div class="container text-center">
+        <!-- Top Logo + Robot -->
+        <div class="auth-header">
+          <img
+            src="public/img/xran.gif"
+            alt="XRangers Bot"
+            class="particle-gif left-shift"
+          />
+          <img
+            src="public/img/minebeamitsumi.png"
+            alt="MinebeaMitsumi Logo"
+            class="logo-img"
+          />
+        </div>
+
+        <!-- Login Box -->
+
+        <div id="loginBox" class="form-section active">
+          <form id="loginForm">
+            <div class="input-group">
+              <label for="loginName">Name</label>
+              <input
+                type="text"
+                id="loginName"
+                placeholder="Enter your name"
+                required
+              />
+            </div>
+            <div class="input-group">
+              <label for="loginEmployeeId">Employee Code</label>
+              <input
+                type="text"
+                id="loginEmployeeId"
+                placeholder="Enter your Employee Code"
+                inputmode="numeric"
+                pattern="\d*"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                required
+              />
+            </div>
+
+            <button type="submit">Login</button>
+          </form>
+          <p id="loginErrorMessage"></p>
+          <p>
+            Don't have an account?
+            <a href="javascript:void(0);" onclick="toggleForm('signup')"
+              >Sign Up</a
+            >
+          </p>
+          <p class="text-link">
+            <a onclick="toggleForm('adminBox')"><b>Admin Login</b></a>
+          </p>
+        </div>
+
+        <!-- Signup Box -->
+        <div id="signupBox" style="display: none" class="form-section">
+          <form id="signupForm">
+            <div class="input-group">
+              <label for="signupName">Name</label>
+              <input
+                type="text"
+                id="signupName"
+                placeholder="Enter your name"
+                required
+              />
+            </div>
+            <div class="input-group">
+              <label for="signupEmployeeId">Employee Code</label>
+              <input
+                type="text"
+                id="signupEmployeeId"
+                placeholder="Enter your Employee Code"
+                inputmode="numeric"
+                pattern="\d*"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="signupStream">Department</label>
+              <select id="signupStream" required>
+                <option value="">Select Department</option>
+                <option value="Software Development">Software</option>
+                <option value="Mechanical">Mechanical</option>
+              </select>
+            </div>
+            <button type="submit">Sign Up</button>
+          </form>
+          <p id="signupErrorMessage" style="color: red"></p>
+          <p>
+            Already have an account?
+            <a href="javascript:void(0);" onclick="toggleForm('login')"
+              >Login</a
+            >
+          </p>
+        </div>
+
+        <!-- Admin Login Box -->
+        <div id="adminBox" style="display: none" class="form-section">
+          <form id="adminForm">
+            <div class="input-group">
+              <label for="adminName">Admin Name</label>
+              <input
+                type="text"
+                id="adminName"
+                placeholder="Enter Admin Name"
+                required
+              />
+            </div>
+            <div class="input-group">
+              <label for="adminpass">Password</label>
+              <input
+                type="password"
+                id="adminpass"
+                placeholder="Enter Password"
+                required
+                style="padding-right: 40px; position: relative"
+              />
+              <i
+                id="toggleAdminPassword"
+                class="fas fa-eye"
+                style="
+                  color: black;
+                  position: absolute;
+                  right: 80px;
+                  margin-top: 45px;
+                  cursor: pointer;
+                "
+              ></i>
+            </div>
+
+            <button type="submit">Login as Admin</button>
+          </form>
+          <div id="errorMessage"></div>
+
+          <p class="text-link">
+            Go back to
+            <a href="javascript:void(0);" onclick="toggleForm('login')"
+              >User Login</a
+            >
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Success Popup -->
+    <div id="successPopup" class="popup">
+      <div class="popup-content">
+        <p id="popupMessage">✅ Login Successful!</p>
+        <button onclick="redirectToData()">OK</button>
+      </div>
+    </div>
+
+    <script src="public/js/jquery-3.3.1.min.js"></script>
+    <script src="public/js/bootstrap.bundle.min.js"></script>
+    <script src="public/js/jquery.singlePageNav.min.js"></script>
+    <script src="public/js/slick.js"></script>
+    <script src="public/js/parallax.min.js"></script>
+    <script src="public/js/templatemo-script.js"></script>
+    <script src="public/js/slider.js"></script>
+    <script src="public/js/index.js"></script>
+  </body>
+</html>

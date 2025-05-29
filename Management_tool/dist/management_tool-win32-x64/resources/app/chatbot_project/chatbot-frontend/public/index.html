@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- Chatbot GIF -->
+    <img src="/robot.gif" alt="Bot" class="chatbot-gif" />
+
+    <div class="chat-container">
+      <!-- Chat Header with Logo -->
+      <div class="chat-header">
+        <a href="http://172.16.101.146:3002/data.html#">
+          <img
+            src="%PUBLIC_URL%/minebeamitsumi.png"
+            alt="MinebeaMitsumi Logo"
+          />
+        </a>
+      </div>
+
+      <div id="chatbot-response">
+        <div id="typing-message" style="display: none">
+          Chatbot is under training...
+        </div>
+        <div id="chatbot-reply"></div>
+      </div>
+    </div>
+
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+
+    <div id="root">
+      <img src="%PUBLIC_URL%/logo192.png" alt="MinebeaMitsumi Logo Small" />
+    </div>
+  </head>
+  <body>
+    <script>
+      document
+        .getElementById("sendMessageButton")
+        ?.addEventListener("click", function () {
+          // Show "training" message
+          document.getElementById("typing-message").style.display = "block";
+          document.getElementById("chatbot-reply").style.display = "none";
+
+          // Simulate delay before showing static training message
+          setTimeout(() => {
+            document.getElementById("typing-message").style.display = "none";
+            document.getElementById("chatbot-reply").style.display = "block";
+            document.getElementById("chatbot-reply").innerText =
+              "Chatbot is under training... Please try again later.";
+          }, 2000); // 2 seconds delay
+        });
+    </script>
+  </body>
+</html>

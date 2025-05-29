@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Management Information System</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <link rel="stylesheet" href="public/css/data.css" type="text/css" />
+    <!-- Select2 CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- jQuery (Required for Select2) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Select2 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  </head>
+  <style>
+    /* Layout */
+    .container {
+      width: 100%;
+      max-width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-x: auto;
+      background: #f8f9fa;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Table */
+    #reportTable {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1000px;
+      margin-bottom: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    #reportTable th,
+    #reportTable td {
+      padding: 12px;
+      text-align: left;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    #reportTable th {
+      background-color: rgb(42, 122, 197);
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Selects and Inputs */
+    select,
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 13px;
+      background-color: #fff;
+      box-sizing: border-box;
+    }
+
+    /* Specific widths */
+    select#project {
+      width: 170px;
+    }
+
+    input#date {
+      min-width: 100px;
+      font-size: 14px;
+      padding: 4px 6px;
+    }
+
+    select#mode {
+      width: 75px;
+    }
+
+    select#code {
+      width: 60px;
+    }
+
+    select#j {
+      width: 65px;
+    }
+
+    input#dueDate {
+      width: 110px;
+    }
+
+    #status select {
+      width: 110px;
+    }
+
+    #hr input,
+    input.utilized-hours {
+      width: 65px !important;
+    }
+
+    /* Tool Used (multiple select) */
+    select.tool-used {
+      min-height: 40px;
+    }
+  </style>
+
+  <body>
+    <div class="navbar">
+      <a href="#">
+        <img
+          src="public/img/minebeamitsumi.png"
+          alt="Company Logo"
+          class="logo"
+        />
+      </a>
+
+      <div class="nav-links">
+        <a href="data.html">Home</a>
+        <a href="dailySheet.html">Daily Task</a>
+        <a href="timeSheet.html">Time Sheet</a>
+        <a
+          href="public/img/combined.png"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Code</a
+        >
+        <a href="#" onclick="logout()" title="Logout">
+          <i class="fas fa-sign-out-alt"></i>
+        </a>
+      </div>
+    </div>
+
+    <div id="imagePopup" class="popup">
+      <div class="popup-content">
+        <span class="close-btn" onclick="closePopup()">×</span>
+        <div class="image-container">
+          <img src="public/img/combined.png" alt="Code Image" />>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>Welcome, <span id="displayName"></span></h2>
+
+      <div class="table-responsive">
+        <table id="reportTable">
+          <tr>
+            <th>Project</th>
+            <th>Mode</th>
+            <th>Date</th>
+            <th>Shift Time</th>
+            <th>Description</th>
+            <th>Code</th>
+            <th>Status</th>
+            <th>Due Date</th>
+            <th>Tool Used</th>
+            <th>J/I</th>
+            <th>Utilized Hr</th>
+            <th>Remarks</th>
+          </tr>
+          <tr id="firstRow">
+            <td>
+              <select id="project">
+                <optgroup label="Software Projects">
+                  <option value="DevOps and Tools">DevOps and Tools</option>
+                  <option value="UBSW Project">UBSW Project</option>
+                  <option value="DigiKey">DigiKey</option>
+                  <option value="E- Mirror OB">E- Mirror OB</option>
+                  <option value="NFC">NFC</option>
+                  <option value="E- Mirror QT GUI">E- Mirror QT GUI</option>
+                  <option value="J34X_HC">J34X_HC</option>
+                  <option value="BSW">BSW</option>
+                  <option value="J4U">J4U</option>
+                  <option value="Mobile Access-eDoor">
+                    Mobile Access-eDoor
+                  </option>
+                  <option value="AutoSAR- UA">AutoSAR- UA</option>
+                  <option value="AutoSAR- MAE">AutoSAR- MAE</option>
+                  <option value="SW Competence-UA">SW Competence-UA</option>
+                  <option value="BMW-XNF">BMW-XNF</option>
+                  <option value="E-mirror">E-mirror</option>
+                  <option value="5K45_HC">5K45_HC</option>
+                  <option value="VK00-HC">VK00-HC</option>
+                  <option value="Audi e-Ring">Audi e-Ring</option>
+                  <option value="5K45_HC_REAR">5K45_HC_REAR</option>
+                  <option value="5K45_HC_Front">5K45_HC_Front</option>
+                  <option value="Data Analytics">Data Analytics</option>
+                </optgroup>
+
+                <optgroup label="Mechanical Projects">
+                  <option value="CAE-Japan">CAE-Japan</option>
+                  <option value="CAE">CAE</option>
+                  <option value="Flush Handle Support to Italy">
+                    Flush Handle Support to Italy
+                  </option>
+                  <option value="Support To Erdweg">Support To Erdweg</option>
+                  <option value="DEP">DEP</option>
+                  <option value="Audi E-Wing">Audi E-Wing</option>
+                  <option value="Mahindra Demo vehicle">
+                    Mahindra Demo vehicle
+                  </option>
+                  <option value="Power Rotative Door">
+                    Power Rotative Door
+                  </option>
+                  <option value="Handle Competence -UA">
+                    Handle Competence -UA
+                  </option>
+                  <option value="C70 St Switch">C70 St Switch</option>
+                  <option value="MAZDA CX5 - Demo Car">
+                    MAZDA CX5 - Demo Car
+                  </option>
+                  <option value="ID5 - Demo Car">ID5 - Demo Car</option>
+                  <option value="Motorized  E-wing">Motorized E-wing</option>
+                  <option value="RSA 15-40">RSA 15-40</option>
+                  <option value="FCA 356">FCA 356</option>
+                  <option value="FRONT FLUSH">FRONT FLUSH</option>
+                  <option value="PSA E-FLUSH LP3">PSA E-FLUSH LP3</option>
+                  <option value="PSA-D34">PSA-D34</option>
+                  <option value="PSA-D-CROSS REAR">PSA-D-CROSS REAR</option>
+                  <option value="BMW wing handle">BMW wing handle</option>
+                  <option value="RR 45">RR 45</option>
+                  <option value="VW Handle">VW Handle</option>
+                  <option value="Scout Handle">Scout Handle</option>
+                </optgroup>
+
+                <optgroup label="Internal">
+                  <option value="Catia Training">Catia Training</option>
+                  <option value="ISO/Quality Systems">
+                    ISO/Quality Systems
+                  </option>
+                  <option value="Marketing - Business Management/Integration">
+                    Marketing - Business Management/Integration
+                  </option>
+                  <option value="Functional Safety Related Activity">
+                    Functional Safety Related Activity
+                  </option>
+                  <option value="Cyber-Security Related Activity">
+                    Cyber-Security Related Activity
+                  </option>
+                  <option value="IATF and ISO Certification">
+                    IATF and ISO Certification
+                  </option>
+                  <option value="Management">Management</option>
+                  <option value="Patent Search">Patent Search</option>
+                  <option value="Each System Management">
+                    Each System Management
+                  </option>
+                  <option value="Various Management/General Affairs">
+                    Various Management/General Affairs
+                  </option>
+                  <option value="Common Engine">Common Engine</option>
+                  <option value="Software UA">Software UA</option>
+                  <option value="Software MAE">Software MAE</option>
+                </optgroup>
+              </select>
+            </td>
+
+            <td>
+              <select id="mode">
+                <option value="WFO">WFO</option>
+                <option value="WFH">WFH</option>
+                <option value="Leave">Leave</option>
+                <option value="Company Holiday">Company Holiday</option>
+              </select>
+            </td>
+            <td><input type="date" id="date" /></td>
+
+            <td>
+              <select>
+                <option value="IST">IST</option>
+                <option value="CET">CET</option>
+                <option value="SPL">SPL</option>
+              </select>
+            </td>
+            <td>
+              <input
+                type="text"
+                placeholder="Description"
+                list="desc-suggestions-kc9yezt9"
+                style="width: 90%; height: 30px; transition: width 0.3s ease"
+                onfocus="this.style.width='300px';"
+                onblur="this.style.width='90%';"
+              />
+            </td>
+
+            <td>
+              <select id="code">
+                <option value="1A">1A</option>
+                <option value="1B">1B</option>
+                <option value="1C">1C</option>
+                <option value="2A">2A</option>
+                <option value="2B">2B</option>
+                <option value="2C">2C</option>
+                <option value="2D">2D</option>
+                <option value="2E">2E</option>
+                <option value="2F">2F</option>
+                <option value="2G">2G</option>
+                <option value="2H">2H</option>
+                <option value="2I">2I</option>
+                <option value="2J">2J</option>
+                <option value="3A">3A</option>
+                <option value="3B">3B</option>
+                <option value="3C">3C</option>
+                <option value="3D">3D</option>
+                <option value="3E">3E</option>
+                <option value="3F">3F</option>
+                <option value="3G">3G</option>
+                <option value="3H">3H</option>
+                <option value="3I">3I</option>
+                <option value="4A">4A</option>
+                <option value="4B">4B</option>
+                <option value="4C">4C</option>
+                <option value="4D">4D</option>
+                <option value="4E">4E</option>
+                <option value="4F">4F</option>
+                <option value="5A">5A</option>
+                <option value="6A">6A</option>
+                <option value="6B">6B</option>
+                <option value="6C">6C</option>
+                <option value="6D">6D</option>
+                <option value="6E">6E</option>
+                <option value="6F">6F</option>
+                <option value="6G">6G</option>
+                <option value="6H">6H</option>
+                <option value="7A">7A</option>
+                <option value="7B">7B</option>
+                <option value="7C">7C</option>
+                <option value="7D">7D</option>
+                <option value="7E">7E</option>
+                <option value="7F">7F</option>
+                <option value="8A">8A</option>
+                <option value="8B">8B</option>
+                <option value="8C">8C</option>
+                <option value="8D">8D</option>
+                <option value="8E">8E</option>
+                <option value="8F">8F</option>
+                <option value="8G">8G</option>
+              </select>
+            </td>
+            <td>
+              <select id="status">
+                <option value="On Time">On Time</option>
+                <option value="Completed">Completed</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Blocked">Blocked</option>
+              </select>
+            </td>
+            <td><input type="date" id="dueDate" /></td>
+
+            <td>
+              <div class="select2-wrapper"></div>
+              <select class="tool-select" multiple style="width: 100%">
+                <option value="CANOE">CANOE</option>
+                <option value="Dev. Conf.">Dev. Conf.</option>
+                <option value="Excel">Excel</option>
+                <option value="Tessy">Tessy</option>
+                <option value="CB">CB</option>
+                <option value="Git">Git</option>
+                <option value="VS Code">VS Code</option>
+                <option value="Enovia">Enovia</option>
+                <option value="Catia">Catia</option>
+                <option value="CAE">Cae</option>
+                <option value="CS+">CS+</option>
+                <option value="MPLAB">MPLAB</option>
+                <option value="Hyperworks">Hyperworks</option>
+                <option value="Hypermesh">Hypermesh</option>
+                <option value="Physics AI">Physics AI</option>
+                <option value="Google Meet">Google Meet</option>
+              </select>
+            </td>
+
+            <td>
+              <select id="j">
+                <option value="JA">JA</option>
+                <option value="JB">JB</option>
+                <option value="JC">JC</option>
+              </select>
+            </td>
+            <td>
+              <input
+                type="number"
+                placeholder="hour"
+                id="hr"
+                class="utilized-hours"
+                min="0.5"
+                max="8"
+                step="0.5"
+                oninput="strictHourInput(this)"
+              />
+            </td>
+
+            <td>
+              <textarea
+                placeholder="Remarks"
+                style="
+                  width: 90%;
+                  height: 30px;
+                  resize: none;
+                  overflow-y: auto;
+                  transition: width 0.3s ease;
+                "
+                onfocus="this.style.width='300px';"
+                onblur="this.style.width='90%';"
+              ></textarea>
+            </td>
+          </tr>
+        </table>
+
+        <div class="tool-container-right">
+          <button onclick="addRow()" class="tool-btn plus-btn">+</button>
+          <button onclick="removeLastRow()" class="tool-btn minus-btn">
+            −
+          </button>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 20px">
+        <button
+          id="submitButton"
+          class="btn-hover color-9"
+          onclick="submitReport()"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+    <!-- Chatbot popup container -->
+    <!-- <div id="chatbotContainer" class="chatbot-popup" style="display: none">
+      <div class="chatbot-header">
+        <span>Chat Assistant</span>
+        <span class="chatbot-close" onclick="toggleChatbot()">×</span>
+      </div>
+      <iframe
+        src="/chatbot_project/chatbot-frontend/public/index.html"
+        frameborder="0"
+        class="chatbot-frame"
+      ></iframe>
+    </div>
+    <div style="position: relative; display: inline-block">
+      <img
+        src="/chatbot_project/chatbot-frontend/public/robot.gif"
+        alt="Chatbot"
+        class="navbar-gif"
+        onclick="showMessage(); window.open('http://172.16.101.127:3002/', '_blank')"
+      />
+      <div
+        id="chatbotMessage"
+        style="
+          display: none;
+          position: absolute;
+          bottom: 80px;
+          left: 0;
+          background: #fff;
+          padding: 5px 10px;
+          border-radius: 8px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+          font-size: 14px;
+        "
+      >
+        Hello, how can I help you?
+      </div>
+    </div> -->
+    <script>
+      function addRow() {
+        const table = document.getElementById("reportTable");
+        const firstRow = document.getElementById("firstRow");
+        const newRow = firstRow.cloneNode(true);
+
+        // Update all IDs inside the cloned row to avoid duplicates
+        const elements = newRow.querySelectorAll("input, select, textarea");
+        elements.forEach((el) => {
+          if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+            el.value = el.value; // clone the current value
+          }
+        });
+
+        newRow.removeAttribute("id"); // remove id to prevent multiple same IDs
+        table.appendChild(newRow);
+      }
+
+      function removeRow() {
+        const table = document.getElementById("reportTable");
+        if (table.rows.length > 2) {
+          table.deleteRow(-1);
+        } else {
+          alert("At least one row must remain.");
+        }
+      }
+
+      function strictHourInput(input) {
+        let value = parseFloat(input.value);
+        if (value > 8) input.value = 8;
+        else if (value < 0.5) input.value = 0.5;
+        else input.value = (Math.round(value * 2) / 2).toFixed(1);
+      }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="public/js/data.js"></script>
+    <script>
+      $(document).ready(function () {
+        function initializeToolUsedSelect() {
+          $(".tool-used").select2({
+            placeholder: "Select Tools",
+            allowClear: true,
+            width: "100%",
+            tags: true,
+            createTag: function (params) {
+              var term = $.trim(params.term);
+              if (term === "") return null;
+              return {
+                id: term,
+                text: term,
+                newTag: true,
+              };
+            },
+          });
+        }
+
+        initializeToolUsedSelect();
+
+        $("#addRowBtn").click(function () {
+          var newRow = $("#reportTable tbody tr:last").clone();
+
+          newRow.find("input, select").val("");
+
+          newRow.find(".tool-used").each(function () {
+            $(this).select2("destroy");
+          });
+
+          newRow
+            .find(".tool-used")
+            .removeAttr("data-select2-id")
+            .removeClass("select2-hidden-accessible")
+            .next(".select2")
+            .remove();
+
+          $("#reportTable tbody").append(newRow);
+          initializeToolUsedSelect();
+        });
+      });
+
+      function strictHourInput(input) {
+        const val = parseFloat(input.value);
+
+        if (input.value === "") return;
+
+        const allowed = [
+          0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8,
+        ];
+
+        if (!allowed.includes(val)) {
+          input.value = "";
+        }
+      }
+
+      function showMessage() {
+        const message = document.getElementById("chatbotMessage");
+        message.style.display = "block";
+        setTimeout(() => {
+          message.style.display = "none";
+        }, 2000);
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const toolSelect = document.getElementById("toolUsed");
+        if (toolSelect) {
+          toolSelect.addEventListener("change", () => {
+            const selectedOptions = Array.from(toolSelect.selectedOptions).map(
+              (option) => option.value
+            );
+            console.log("Selected tools:", selectedOptions);
+          });
+        }
+      });
+      function logout() {
+        localStorage.clear();
+
+        window.location.href = "index.html";
+      }
+    </script>
+
+    <div id="customAlert" class="custom-alert hidden"></div>
+  </body>
+</html>

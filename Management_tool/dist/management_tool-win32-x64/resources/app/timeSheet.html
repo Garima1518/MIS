@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time Sheet</title>
+  <link rel="stylesheet" href="public/css/dailySheet.css" type="text/css" />
+  <link rel="stylesheet" href="public/css/timeSheet.css" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="data.html">
+      <img src="public/img/minebeamitsumi.png" alt="Company Logo" class="logo" />
+    </a>
+    <div class="nav-links">
+      <a href="data.html">Home</a>
+      <a href="dailySheet.html">Daily Task</a>
+      <a href="timeSheet.html">Time Sheet</a>
+      <a href="public/img/combined.png" target="_blank" rel="noopener noreferrer">Code</a>
+      <a href="#" onclick="logout()" title="Logout">
+        <i class="fas fa-sign-out-alt"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Popup for Image -->
+  <div id="imagePopup" class="popup">
+    <div class="popup-content">
+      <span class="close-btn" onclick="closePopup()">×</span>
+      <div class="image-container">
+        <img src="public/img/combined.png" alt="Code Image" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Time Sheet Content -->
+  <div class="container">
+    <h1>Time Sheet</h1>
+
+    <!-- Table -->
+    <div class="table-scroll">
+      <table id="dailyTable">
+        <tr>
+          <th>Project</th>
+          <th>Code</th>
+          <th>Description</th>
+          <th>J/I</th>
+        </tr>
+      </table>
+    </div>
+
+    <div class="filter-container">
+      <label for="monthRange">Select Month Range:</label>
+      <select id="monthRange">
+        <option value="current">This Month </option>
+        <option value="previous">Last Month</option>
+      </select>
+    </div>
+
+    <div class="button-container"
+      style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+      <button id="downloadExcelButton">Download Excel</button>
+      <div id="summaryBox" style="
+        margin-left: auto;
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        color: #333;
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 1.5;
+      ">
+        <!-- Summary content will appear here -->
+      </div>
+    </div>
+
+
+
+    <!-- <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+        let timeTable = document.getElementById("dailyTable");
+        let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+
+        if (!loggedInUser) {
+          showalert("Please log in first.", "info");
+          return;
+        }
+
+        let employeeId = loggedInUser.employeeId;
+        let name = loggedInUser.name.replace(/\s+/g, "_");
+        let collectionName = `${name}_${employeeId}`;
+
+        let apiBaseUrl = window.location.hostname.includes("172.16.101.146")
+          ? "http://172.16.101.146:3000"
+          : "https://your-production-url.com";
+
+        let originalData = [];
+        let totalByJI = { JA: 0, JB: 0, JC: 0 }; // ✅ Global variable
+        let totalSum = 0; // ✅ Global variable
+
+        async function fetchData() {
+          try {
+            let url = `${apiBaseUrl}/time-sheet/${collectionName}`;
+            console.log("Fetching Data from URL:", url);
+
+            let response = await fetch(url);
+            if (!response.ok)
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            originalData = await response.json();
+            console.log("Time Sheet Data:", originalData);
+
+            if (originalData.length === 0) {
+              timeTable.innerHTML =
+                "<tr><td colspan='100%' style='text-align:center'>No data available.</td></tr>";
+              return;
+            }
+
+            handleMonthFilterChange(); // Initial filter
+          } catch (error) {
+            console.error("Failed to fetch data:", error);
+            timeTable.innerHTML =
+              "<tr><td colspan='100%' style='text-align:center; color:red;'>Error loading data.</td></tr>";
+          }
+        }
+        function filterDataByCustomRange(data, rangeType) {
+  const today = new Date();
+  let startDate, endDate;
+
+  if (rangeType === "current") {
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
+
+    // Special case: If today is 26th or later, treat this as NEXT month's cycle
+    if (today.getDate() >= 26) {
+      startDate = new Date(currentYear, currentMonth, 26);
+      endDate = new Date(currentYear, currentMonth + 1, 25, 23, 59, 59);
+    } else {
+      // Normal: 26th of last month to 25th of this month
+      startDate = new Date(currentYear, currentMonth - 1, 26);
+      endDate = new Date(currentYear, currentMonth, 25, 23, 59, 59);
+    }
+  } 
+  else if (rangeType === "previous") {
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
+
+    if (today.getDate() >= 26) {
+      // If today is after 26th, previous month means 26th of previous-1 month to 25th of previous month
+      startDate = new Date(currentYear, currentMonth - 1, 26);
+      endDate = new Date(currentYear, currentMonth, 25, 23, 59, 59);
+    } else {
+      // Normal: two months back
+      startDate = new Date(currentYear, currentMonth - 2, 26);
+      endDate = new Date(currentYear, currentMonth - 1, 25, 23, 59, 59);
+    }
+  }
+
+  return data.filter((row) => {
+    const rowDate = new Date(row.date);
+    return rowDate >= startDate && rowDate <= endDate;
+  });
+}
+
+
+
+        function handleMonthFilterChange() {
+          let selectedRange = document.getElementById("monthRange").value;
+          let filteredData = filterDataByCustomRange(originalData, selectedRange);
+          displayTableData(filteredData);
+        }
+        document.addEventListener("blur", function (e) {
+  if (e.target.classList.contains("editable")) {
+    const field = e.target.dataset.field;
+    const key = e.target.dataset.key;
+    const newValue = e.target.innerText.trim();
+
+    fetch(`${apiBaseUrl}/update-field`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        field,
+        value: newValue,
+        key,
+        collectionName
+      })
+    }).then((res) => {
+      if (!res.ok) throw new Error("Update failed");
+      console.log(`Updated ${field} for ${key} to ${newValue}`);
+    }).catch(err => {
+      console.error("Update error:", err);
+      showAlert("Update failed. Try again.", "error");
+    });
+  }
+}, true); // useCapture = true to catch blur
+        document
+          .getElementById("monthRange")
+          .addEventListener("change", handleMonthFilterChange);
+
+        function displayTableData(data) {
+          timeTable.innerHTML = "";
+
+          let groupedData = {};
+          let allDatesInRange = new Set();
+          totalByJI = { JA: 0, JB: 0, JC: 0 };
+          totalSum = 0;
+
+          // Collect all unique dates from filtered data
+          data.forEach((row) => {
+            const dateStr = new Date(row.date).toISOString().split("T")[0];
+            allDatesInRange.add(dateStr);
+          });
+
+          // Sort dates
+          let allDates = Array.from(allDatesInRange).sort();
+          if (allDates.length === 0) {
+            timeTable.innerHTML = "<tr><td colspan='100%' style='text-align:center;'>No data available.</td></tr>";
+            updateSummaryBox(0, { JA: 0, JB: 0, JC: 0 });
+            return;
+          }
+
+          // Generate complete date range
+          const minDate = new Date(allDates[0]);
+          const maxDate = new Date(allDates[allDates.length - 1]);
+
+          let current = new Date(minDate);
+          let fullDateList = [];
+          while (current <= maxDate) {
+            fullDateList.push(current.toISOString().split("T")[0]);
+            current.setDate(current.getDate() + 1);
+          }
+
+          // Group data
+          data.forEach((row) => {
+            let project = row.project || "N/A";
+            let code = row.code || "N/A";
+            let description = row.description || "N/A";
+            let ji = row.ji || "N/A";
+            let date = new Date(row.date).toISOString().split("T")[0];
+            let utilizedHour = row.utilizedHour || 0;
+            // function normalizeString(str) {
+            //   return str
+            //     .trim()
+            //     .toLowerCase()
+            //     .replace(/[\s\-]+/g, " "); // replace multiple spaces/hyphens with a single space
+            // }
+
+            // let key = `${project}_${code}_${description}_${ji}`;
+            let key = `${project.trim().toLowerCase()}_${code.trim().toLowerCase()}_${description.trim().toLowerCase()}_${ji.trim().toUpperCase()}`;
+            // let key = `${normalizeString(project)}_${normalizeString(code)}_${normalizeString(description)}_${ji.trim().toUpperCase()}`;
+
+
+            if (!groupedData[key]) {
+              groupedData[key] = {
+                project,
+                code,
+                description,
+                ji,
+                dates: {},
+              };
+            }
+            // groupedData[key] = {
+            //   project: project.trim(),
+            //   code: code.trim(),
+            //   description: description.trim(),
+            //   ji: ji.trim().toUpperCase(),
+            //   dates: {},
+            // };
+
+
+            groupedData[key].dates[date] = (groupedData[key].dates[date] || 0) + utilizedHour;
+
+            if (totalByJI[ji] !== undefined) {
+              totalByJI[ji] += utilizedHour;
+            }
+          });
+
+          // Determine which dates are leave days (all 0)
+          const leaveDays = {};
+          fullDateList.forEach(date => {
+            let total = 0;
+            Object.values(groupedData).forEach(entry => {
+              total += entry.dates[date] || 0;
+            });
+            leaveDays[date] = (total === 0); // true if it's a leave day
+          });
+
+          // Header
+          let headerRow = `<tr>
+    <th>Project</th>
+    <th>Code</th>
+    <th>Description</th>
+    <th>J/I</th>`;
+          fullDateList.forEach((date) => {
+            const style = leaveDays[date] ? "style='background-color:red; color:white;'" : "";
+            headerRow += `<th ${style}>${date}</th>`;
+          });
+          headerRow += `<th>Sum</th></tr>`;
+          timeTable.innerHTML += headerRow;
+
+          // Rows
+      //     Object.values(groupedData).forEach((entry) => {
+      //       let rowHTML = `<tr>
+      // <td>${entry.project}</td>
+      // <td>${entry.code}</td>
+      // <td>${entry.description}</td>
+      // <td>${entry.ji}</td>`;
+      Object.entries(groupedData).forEach(([key, entry]) => {
+    let rowHTML = `<tr>
+  <td>${entry.project}</td>
+  <td contenteditable="true" class="editable" data-field="code" data-key="${key}">${entry.code}</td>
+  <td>${entry.description}</td>
+  <td contenteditable="true" class="editable" data-field="ji" data-key="${key}">${entry.ji}</td>`;
+
+            let sum = 0;
+            fullDateList.forEach((date) => {
+              let val = entry.dates[date] || 0;
+              const style = leaveDays[date] ? "style='background-color:red; color:white;'" : "";
+              rowHTML += `<td ${style}>${val}</td>`;
+              sum += val;
+            });
+
+            const sumStyle = sum === 0 ? "style='color:red;'" : "";
+            rowHTML += `<td ${sumStyle}><strong>${sum}</strong></td></tr>`;
+            timeTable.innerHTML += rowHTML;
+
+            totalSum += sum;
+          });
+
+          updateSummaryBox(totalSum, totalByJI);
+        }
+        fetchData();
+
+        document.getElementById("downloadExcelButton").addEventListener("click", function () {
+          const table = document.getElementById("dailyTable");
+          if (!table || table.rows.length <= 1) {
+            showAlert("No data available to download.", "info");
+            return;
+          }
+
+          const workbook = new ExcelJS.Workbook();
+          const worksheet = workbook.addWorksheet("Time Sheet");
+
+          const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+          const employeeName = loggedInUser?.name || "User";
+          const currentMonth = new Date().toLocaleString("default", { month: "long", year: "numeric" });
+
+          // Setup header info
+          worksheet.mergeCells("A1:G1");
+          worksheet.getCell("A1").value = "U-SHIN INDIA PRIVATE LIMITED";
+          worksheet.getCell("A1").font = { bold: true, size: 16 };
+          worksheet.getCell("A1").alignment = { horizontal: "center" };
+
+          worksheet.mergeCells("A2:G2");
+          worksheet.getCell("A2").value = `Month: ${currentMonth}`;
+          worksheet.getCell("A2").font = { italic: true, size: 12 };
+          worksheet.getCell("A2").alignment = { horizontal: "center" };
+
+          worksheet.mergeCells("A3:G3");
+          worksheet.getCell("A3").value = `Name: ${employeeName}`;
+          worksheet.getCell("A3").font = { size: 12 };
+          worksheet.getCell("A3").alignment = { horizontal: "center" };
+
+          worksheet.addRow([]);
+
+          const tableHeader = Array.from(table.rows[0].cells).map(th => th.innerText.trim());
+          const totalCols = table.rows[0].cells.length;
+
+
+          const headerRow = worksheet.addRow(tableHeader);
+          headerRow.eachCell(cell => {
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9D9D9' } };
+            cell.font = { bold: true };
+            cell.alignment = { horizontal: 'center' };
+          });
+
+          const groupedByJI = {};
+          const totalByJI = { JA: 0, JB: 0, JC: 0 };
+          let totalSum = 0;
+
+          // Group entries by JI
+          for (let i = 1; i < table.rows.length; i++) {
+            const cells = Array.from(table.rows[i].cells).map(c => c.innerText.trim());
+            const [project, code, description, ji] = cells;
+            const dateValues = cells.slice(4, cells.length - 1).map(Number);
+            const sum = Number(cells.at(-1)) || 0;
+
+            if (!groupedByJI[ji]) groupedByJI[ji] = [];
+            groupedByJI[ji].push({ project, code, description, ji, dateValues, sum });
+
+            if (totalByJI[ji] !== undefined) totalByJI[ji] += sum;
+            totalSum += sum;
+          }
+
+          Object.entries(groupedByJI).forEach(([ji, rows]) => {
+            const jiRow = worksheet.addRow([null, null, null, null, ji]);
+            jiRow.font = { bold: true };
+            jiRow.alignment = { horizontal: "center" };
+            jiRow.eachCell(cell => {
+              cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FFD9D9D9' } // grey
+              };
+            });
+
+            let subtotal = 0;
+
+            rows.forEach(row => {
+              const rowData = [row.project, row.code, row.description, row.ji, ...row.dateValues, row.sum];
+
+              const addedRow = worksheet.addRow(rowData);
+              subtotal += row.sum;
+            });
+
+            // Properly aligned subtotal row
+            const subtotalRow = new Array(totalCols).fill('');
+            subtotalRow[totalCols - 1] = subtotal;
+            const subtotalExcelRow = worksheet.addRow(subtotalRow);
+            subtotalExcelRow.font = { bold: true, italic: true };
+            subtotalExcelRow.getCell(totalCols).fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'FFD9D9D9' }
+            };
+          });
+
+          // Add grand total summary
+          worksheet.addRow([]);
+
+
+          const summaryRow = new Array(totalCols).fill('');
+          summaryRow[0] = "Total Hours Logged";
+          summaryRow[1] = `JA: ${totalByJI.JA} hrs`;
+          summaryRow[2] = `JB: ${totalByJI.JB} hrs`;
+          summaryRow[3] = `JC: ${totalByJI.JC} hrs`;
+          summaryRow[totalCols - 1] = `SUM: ${totalSum} hrs`;
+
+          const finalRow = worksheet.addRow(summaryRow);
+          finalRow.eachCell(cell => {
+            cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'FFFFFF00' }
+            };
+            cell.font = { bold: true };
+            cell.alignment = { horizontal: 'center' };
+          });
+
+          // Adjust column widths uniformly
+          worksheet.columns.forEach(col => {
+            col.width = 18;
+          });
+
+          workbook.xlsx.writeBuffer().then(buffer => {
+            saveAs(new Blob([buffer]), "Time_Sheet.xlsx");
+          });
+        });
+      });
+      function openPopup() {
+        document.getElementById("imagePopup").style.display = "block";
+      }
+
+      function closePopup() {
+        document.getElementById("imagePopup").style.display = "none";
+      }
+
+      function updateSummaryBox(totalSum, totalByJI) {
+        let summaryBox = document.getElementById("summaryBox");
+        summaryBox.innerHTML = `
+    Total Hours Logged:<span style="color:#e60000"> ${totalSum}</span><br/>
+    JA: <span style="color:#e60000">${totalByJI.JA} hrs</span><br/>
+    JB: <span style="color:#e60000">${totalByJI.JB} hrs</span><br/>
+    JC: <span style="color:#e60000">${totalByJI.JC} hrs</span>
+  `;
+      }
+      function logout() {
+        // Clear session/localStorage as needed
+        localStorage.clear(); // or sessionStorage.clear();
+
+        // Redirect to login page
+        window.location.href = "index.html";
+      }
+
+
+      function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById("customAlert");
+        alertBox.innerText = message;
+
+        // Reset all types
+        alertBox.className = 'custom-alert';
+        alertBox.classList.add('show');
+
+        // Add specific type
+        if (['success', 'warning', 'info', 'error'].includes(type)) {
+          alertBox.classList.add(type);
+        }
+
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+          alertBox.classList.remove('show');
+        }, 3000);
+      }
+
+
+    </script> -->
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+            let timeTable = document.getElementById("dailyTable");
+            let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    
+            if (!loggedInUser) {
+              showalert("Please log in first.", "info");
+              return;
+            }
+    
+            let employeeId = loggedInUser.employeeId;
+            let name = loggedInUser.name.replace(/\s+/g, "_");
+            let collectionName = `${name}_${employeeId}`;
+    
+            let apiBaseUrl = window.location.hostname.includes("172.16.101.127")
+              ? "http://172.16.101.127:3000"
+              : "https://your-production-url.com";
+    
+            let originalData = [];
+            let totalByJI = { JA: 0, JB: 0, JC: 0 }; // ✅ Global variable
+            let totalSum = 0; // ✅ Global variable
+    
+            async function fetchData() {
+              try {
+                let url = `${apiBaseUrl}/time-sheet/${collectionName}`;
+                console.log("Fetching Data from URL:", url);
+    
+                let response = await fetch(url);
+                if (!response.ok)
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+                originalData = await response.json();
+                console.log("Time Sheet Data:", originalData);
+    
+                if (originalData.length === 0) {
+                  timeTable.innerHTML =
+                    "<tr><td colspan='100%' style='text-align:center'>No data available.</td></tr>";
+                  return;
+                }
+    
+                handleMonthFilterChange(); // Initial filter
+              } catch (error) {
+                console.error("Failed to fetch data:", error);
+                timeTable.innerHTML =
+                  "<tr><td colspan='100%' style='text-align:center; color:red;'>Error loading data.</td></tr>";
+              }
+            }
+            function filterDataByCustomRange(data, rangeType) {
+      const today = new Date();
+      let startDate, endDate;
+    
+      if (rangeType === "current") {
+        let currentMonth = today.getMonth();
+        let currentYear = today.getFullYear();
+    
+        // Special case: If today is 26th or later, treat this as NEXT month's cycle
+        if (today.getDate() >= 26) {
+          startDate = new Date(currentYear, currentMonth, 26);
+          endDate = new Date(currentYear, currentMonth + 1, 25, 23, 59, 59);
+        } else {
+          // Normal: 26th of last month to 25th of this month
+          startDate = new Date(currentYear, currentMonth - 1, 26);
+          endDate = new Date(currentYear, currentMonth, 25, 23, 59, 59);
+        }
+      } 
+      else if (rangeType === "previous") {
+        let currentMonth = today.getMonth();
+        let currentYear = today.getFullYear();
+    
+        if (today.getDate() >= 26) {
+          // If today is after 26th, previous month means 26th of previous-1 month to 25th of previous month
+          startDate = new Date(currentYear, currentMonth - 1, 26);
+          endDate = new Date(currentYear, currentMonth, 25, 23, 59, 59);
+        } else {
+          // Normal: two months back
+          startDate = new Date(currentYear, currentMonth - 2, 26);
+          endDate = new Date(currentYear, currentMonth - 1, 25, 23, 59, 59);
+        }
+      }
+    
+      return data.filter((row) => {
+        const rowDate = new Date(row.date);
+        return rowDate >= startDate && rowDate <= endDate;
+      });
+    }
+    
+    
+    
+            function handleMonthFilterChange() {
+              let selectedRange = document.getElementById("monthRange").value;
+              let filteredData = filterDataByCustomRange(originalData, selectedRange);
+              displayTableData(filteredData);
+            }
+            document.addEventListener("blur", function (e) {
+      if (e.target.classList.contains("editable")) {
+        const field = e.target.dataset.field;
+        const key = e.target.dataset.key;
+        const newValue = e.target.innerText.trim();
+    
+        fetch(`${apiBaseUrl}/update-field`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            field,
+            value: newValue,
+            key,
+            collectionName
+          })
+        }).then((res) => {
+          if (!res.ok) throw new Error("Update failed");
+          console.log(`Updated ${field} for ${key} to ${newValue}`);
+        }).catch(err => {
+          console.error("Update error:", err);
+          showAlert("Update failed. Try again.", "error");
+        });
+      }
+    }, true); // useCapture = true to catch blur
+    
+            document
+              .getElementById("monthRange")
+              .addEventListener("change", handleMonthFilterChange);
+    
+            function displayTableData(data) {
+              timeTable.innerHTML = "";
+    
+              let groupedData = {};
+              let allDatesInRange = new Set();
+              totalByJI = { JA: 0, JB: 0, JC: 0 };
+              totalSum = 0;
+    
+              // Collect all unique dates from filtered data
+              data.forEach((row) => {
+                const dateStr = new Date(row.date).toISOString().split("T")[0];
+                allDatesInRange.add(dateStr);
+              });
+    
+              // Sort dates
+              let allDates = Array.from(allDatesInRange).sort();
+              if (allDates.length === 0) {
+                timeTable.innerHTML = "<tr><td colspan='100%' style='text-align:center;'>No data available.</td></tr>";
+                updateSummaryBox(0, { JA: 0, JB: 0, JC: 0 });
+                return;
+              }
+    
+              // Generate complete date range
+              const minDate = new Date(allDates[0]);
+              const maxDate = new Date(allDates[allDates.length - 1]);
+    
+              let current = new Date(minDate);
+              let fullDateList = [];
+              while (current <= maxDate) {
+                fullDateList.push(current.toISOString().split("T")[0]);
+                current.setDate(current.getDate() + 1);
+              }
+    
+              // Group data
+              data.forEach((row) => {
+                let project = row.project || "N/A";
+                let code = row.code || "N/A";
+                let description = row.description || "N/A";
+                let ji = row.ji || "N/A";
+                let date = new Date(row.date).toISOString().split("T")[0];
+                let utilizedHour = row.utilizedHour || 0;
+                // function normalizeString(str) {
+                //   return str
+                //     .trim()
+                //     .toLowerCase()
+                //     .replace(/[\s\-]+/g, " "); // replace multiple spaces/hyphens with a single space
+                // }
+    
+                // let key = `${project}_${code}_${description}_${ji}`;
+                let key = `${project.trim().toLowerCase()}_${code.trim().toLowerCase()}_${description.trim().toLowerCase()}_${ji.trim().toUpperCase()}`;
+                // let key = `${normalizeString(project)}_${normalizeString(code)}_${normalizeString(description)}_${ji.trim().toUpperCase()}`;
+    
+    
+                if (!groupedData[key]) {
+                  groupedData[key] = {
+                    project,
+                    code,
+                    description,
+                    ji,
+                    dates: {},
+                  };
+                }
+                // groupedData[key] = {
+                //   project: project.trim(),
+                //   code: code.trim(),
+                //   description: description.trim(),
+                //   ji: ji.trim().toUpperCase(),
+                //   dates: {},
+                // };
+    
+    
+                groupedData[key].dates[date] = (groupedData[key].dates[date] || 0) + utilizedHour;
+    
+                if (totalByJI[ji] !== undefined) {
+                  totalByJI[ji] += utilizedHour;
+                }
+              });
+    
+              // Determine which dates are leave days (all 0)
+              const leaveDays = {};
+              fullDateList.forEach(date => {
+                let total = 0;
+                Object.values(groupedData).forEach(entry => {
+                  total += entry.dates[date] || 0;
+                });
+                leaveDays[date] = (total === 0); // true if it's a leave day
+              });
+    // Header
+             // Header with calendar icon before date columns
+             let headerRow = `<tr>
+        <th>Project</th>
+        <th>Code</th>
+        <th>Description</th>
+        <th>J/I</th>`;
+      fullDateList.forEach(date => {
+        const style = leaveDays[date] ? "style='background-color:red; color:white;'" : "";
+        headerRow += `<th ${style}>${date}</th>`;
+      });
+      headerRow += `<th>Sum</th>`;
+      timeTable.innerHTML += headerRow;
+    
+      Object.entries(groupedData).forEach(([key, entry]) => {
+        let rowHTML = `<tr>
+      <td>${entry.project}</td>
+      <td contenteditable="true" class="editable" data-field="code" data-key="${key}">${entry.code}</td>
+      <td>${entry.description}</td>
+      <td contenteditable="true" class="editable" data-field="ji" data-key="${key}">${entry.ji}</td>`;
+    
+        let sum = 0;
+        fullDateList.forEach(date => {
+          let val = entry.dates[date] || 0;
+          const style = leaveDays[date] ? "style='background-color:red; color:white;'" : "";
+          rowHTML += `<td ${style}>${val}</td>`;
+          sum += val;
+        });
+    
+                const sumStyle = sum === 0 ? "style='color:red;'" : "";
+                rowHTML += `<td ${sumStyle}><strong>${sum}</strong></td></tr>`;
+                timeTable.innerHTML += rowHTML;
+    
+                totalSum += sum;
+              });
+    
+              updateSummaryBox(totalSum, totalByJI);
+            }
+            fetchData();
+    
+            document.getElementById("downloadExcelButton").addEventListener("click", function () {
+              const table = document.getElementById("dailyTable");
+              if (!table || table.rows.length <= 1) {
+                showAlert("No data available to download.", "info");
+                return;
+              }
+    
+              const workbook = new ExcelJS.Workbook();
+              const worksheet = workbook.addWorksheet("Time Sheet");
+    
+              const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+              const employeeName = loggedInUser?.name || "User";
+              const currentMonth = new Date().toLocaleString("default", { month: "long", year: "numeric" });
+    
+              // Setup header info
+              worksheet.mergeCells("A1:G1");
+              worksheet.getCell("A1").value = "U-SHIN INDIA PRIVATE LIMITED";
+              worksheet.getCell("A1").font = { bold: true, size: 16 };
+              worksheet.getCell("A1").alignment = { horizontal: "center" };
+    
+              worksheet.mergeCells("A2:G2");
+              worksheet.getCell("A2").value = `Month: ${currentMonth}`;
+              worksheet.getCell("A2").font = { italic: true, size: 12 };
+              worksheet.getCell("A2").alignment = { horizontal: "center" };
+    
+              worksheet.mergeCells("A3:G3");
+              worksheet.getCell("A3").value = `Name: ${employeeName}`;
+              worksheet.getCell("A3").font = { size: 12 };
+              worksheet.getCell("A3").alignment = { horizontal: "center" };
+    
+              worksheet.addRow([]);
+    
+              const tableHeader = Array.from(table.rows[0].cells).map(th => th.innerText.trim());
+              const totalCols = table.rows[0].cells.length;
+    
+    
+              const headerRow = worksheet.addRow(tableHeader);
+              headerRow.eachCell(cell => {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9D9D9' } };
+                cell.font = { bold: true };
+                cell.alignment = { horizontal: 'center' };
+              });
+    
+              const groupedByJI = {};
+              const totalByJI = { JA: 0, JB: 0, JC: 0 };
+              let totalSum = 0;
+    
+              // Group entries by JI
+              for (let i = 1; i < table.rows.length; i++) {
+                const cells = Array.from(table.rows[i].cells).map(c => c.innerText.trim());
+                const [project, code, description, ji] = cells;
+                const dateValues = cells.slice(4, cells.length - 1).map(Number);
+                const sum = Number(cells.at(-1)) || 0;
+    
+                if (!groupedByJI[ji]) groupedByJI[ji] = [];
+                groupedByJI[ji].push({ project, code, description, ji, dateValues, sum });
+    
+                if (totalByJI[ji] !== undefined) totalByJI[ji] += sum;
+                totalSum += sum;
+              }
+    
+              Object.entries(groupedByJI).forEach(([ji, rows]) => {
+                const jiRow = worksheet.addRow([null, null, null, null, ji]);
+                jiRow.font = { bold: true };
+                jiRow.alignment = { horizontal: "center" };
+                jiRow.eachCell(cell => {
+                  cell.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FFD9D9D9' } // grey
+                  };
+                });
+    
+                let subtotal = 0;
+    
+                rows.forEach(row => {
+                  const rowData = [row.project, row.code, row.description, row.ji, ...row.dateValues, row.sum];
+    
+                  const addedRow = worksheet.addRow(rowData);
+                  subtotal += row.sum;
+                });
+    
+                // Properly aligned subtotal row
+                const subtotalRow = new Array(totalCols).fill('');
+                subtotalRow[totalCols - 1] = subtotal;
+                const subtotalExcelRow = worksheet.addRow(subtotalRow);
+                subtotalExcelRow.font = { bold: true, italic: true };
+                subtotalExcelRow.getCell(totalCols).fill = {
+                  type: 'pattern',
+                  pattern: 'solid',
+                  fgColor: { argb: 'FFD9D9D9' }
+                };
+              });
+    
+              // Add grand total summary
+              worksheet.addRow([]);
+    
+    
+              const summaryRow = new Array(totalCols).fill('');
+              summaryRow[0] = "Total Hours Logged";
+              summaryRow[1] = `JA: ${totalByJI.JA} hrs`;
+              summaryRow[2] = `JB: ${totalByJI.JB} hrs`;
+              summaryRow[3] = `JC: ${totalByJI.JC} hrs`;
+              summaryRow[totalCols - 1] = `SUM: ${totalSum} hrs`;
+    
+              const finalRow = worksheet.addRow(summaryRow);
+              finalRow.eachCell(cell => {
+                cell.fill = {
+                  type: 'pattern',
+                  pattern: 'solid',
+                  fgColor: { argb: 'FFFFFF00' }
+                };
+                cell.font = { bold: true };
+                cell.alignment = { horizontal: 'center' };
+              });
+    
+              // Adjust column widths uniformly
+              worksheet.columns.forEach(col => {
+                col.width = 18;
+              });
+    
+              workbook.xlsx.writeBuffer().then(buffer => {
+                saveAs(new Blob([buffer]), "Time_Sheet.xlsx");
+              });
+            });
+          });
+          function openPopup() {
+            document.getElementById("imagePopup").style.display = "block";
+          }
+    
+          function closePopup() {
+            document.getElementById("imagePopup").style.display = "none";
+          }
+    
+          function updateSummaryBox(totalSum, totalByJI) {
+            let summaryBox = document.getElementById("summaryBox");
+            summaryBox.innerHTML = `
+        Total Hours Logged:<span style="color:#e60000"> ${totalSum}</span><br/>
+        JA: <span style="color:#e60000">${totalByJI.JA} hrs</span><br/>
+        JB: <span style="color:#e60000">${totalByJI.JB} hrs</span><br/>
+        JC: <span style="color:#e60000">${totalByJI.JC} hrs</span>
+      `;
+          }
+          function logout() {
+            // Clear session/localStorage as needed
+            localStorage.clear(); // or sessionStorage.clear();
+    
+            // Redirect to login page
+            window.location.href = "index.html";
+          }
+    
+    
+          function showAlert(message, type = 'error') {
+            const alertBox = document.getElementById("customAlert");
+            alertBox.innerText = message;
+    
+            // Reset all types
+            alertBox.className = 'custom-alert';
+            alertBox.classList.add('show');
+    
+            // Add specific type
+            if (['success', 'warning', 'info', 'error'].includes(type)) {
+              alertBox.classList.add(type);
+            }
+    
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+              alertBox.classList.remove('show');
+            }, 3000);
+          }
+    
+    
+    
+    </script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <div id="customAlert" class="custom-alert hidden"></div>
+</body>
+
+</html>

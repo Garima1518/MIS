@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="admin_dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+
+</head>
+<style>
+  /* Container for the cards section */
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    margin: 20px;
+  }
+
+  /* Individual card styling */
+  .card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 48%;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .card h3 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #333;
+  }
+
+  .card p {
+    font-size: 1.1rem;
+    color: #666;
+  }
+
+  /* Hover effect for the cards */
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Full-width card for task details */
+  .card.full-width {
+    width: 100%;
+    box-shadow: none;
+    /* Remove shadow for the full-width card */
+    padding: 30px;
+    background-color: #f7f9fc;
+    border-radius: 8px;
+  }
+
+  /* Task details section styling */
+  #taskDetailsSection {
+    display: none;
+    /* Hidden by default */
+    margin-top: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f4f7fb, #e3e7f0);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  #taskDetailsTitle {
+    font-size: 1.5rem;
+    color: #2d3a3b;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  /* Table styling for task details */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  table th,
+  table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 1.1rem;
+    color: #555;
+  }
+
+  table th {
+    background-color: #182848;
+    color: #fff;
+    font-weight: 500;
+  }
+
+  table td {
+    background-color: #f9f9f9;
+  }
+
+  table tr:nth-child(even) {
+    background-color: #f1f1f1;
+  }
+
+  table tr:hover {
+    background-color: #e1e4e8;
+  }
+
+  /* Hover effect for table rows */
+  table tr:hover td {
+    cursor: pointer;
+    color: #333;
+  }
+
+  /* Media query for responsiveness */
+  @media (max-width: 768px) {
+    .card {
+      width: 100%;
+    }
+
+    table th,
+    table td {
+      font-size: 0.9rem;
+    }
+  }
+</style>
+
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>Admin</h2>
+      <ul>
+       
+        <li class="active" onclick="showSection('dashboardSection', this)">Dashboard</li>
+        <li onclick="showSection('usersSection', this)">Users</li>
+        <li onclick="alert('Still in implementation')">Projects</li>
+
+        <li onclick="showAnalytics()">Analytics</li>
+
+
+        <li onclick="showIncompleteForPreviousDay()">Logout</li>
+      </ul>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+      <!-- Top navbar -->
+      <nav class="navbar">
+        <div class="navbar-left">
+        </div>
+      </nav>
+
+      <!-- DASHBOARD SECTION -->
+      <section id="dashboardSection" class="section">
+        <div class="cards">
+          <div class="card">
+            <h3>Total Users</h3>
+            <p id="totalUsers">Loading...</p>
+          </div>
+          <div class="card">
+            <h3>Active Projects</h3>
+            <p id="activeProjects">Loading...</p>
+          </div>
+
+          <!-- Blocked Tasks Card -->
+          <div class="card" onclick="showTaskDetails('blocked')">
+            <h3>Blocked Tasks</h3>
+            <p id="blockedTasks">Loading...</p>
+          </div>
+
+          <!-- Delayed Tasks Card -->
+          <div class="card" onclick="showTaskDetails('delayed')">
+            <h3>Delayed Tasks</h3>
+            <p id="delayedTasks">Loading...</p>
+          </div>
+        </div>
+
+        <!-- Task Details Section -->
+        <div class="cards" style="margin-top: 30px; display: none;" id="taskDetailsSection">
+          <div class="card full-width">
+            <h3 id="taskDetailsTitle">Task Details</h3>
+            <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr>
+                  <th>Project</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                  <th>Utilized Hour</th>
+                </tr>
+              </thead>
+              <tbody id="taskDetailsBody">
+                <!-- Tasks will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div style="display: flex; justify-content: space-between; margin: 20px;">
+          <!-- Software Development Bar Chart -->
+          <div style="width: 48%; height: 450px; overflow: hidden;">
+            <canvas id="softwareBarChart" width="1200" height="400"></canvas>
+          </div>
+
+          <!-- Mechanical Bar Chart -->
+          <div style="width: 48%; height: 450px; overflow: hidden;">
+            <canvas id="mechanicalBarChart" width="1200" height="400"></canvas>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin: 20px;">
+          <div style="width: 48%; height: 450px; overflow: hidden;">
+            <canvas id="statusHorizontalBarChart" width="1200" height="400"></canvas>
+          </div>
+
+          <!-- Mechanical Horizontal Status Bar Chart -->
+          <div style="width: 48%; height: 450px; overflow: hidden; margin: 20px;">
+            <canvas id="mechanicalStatusHorizontalBarChart" width="1200" height="400"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- USERS SECTION -->
+      <section id="usersSection" class="section hidden">
+        <h1>All Users Data</h1>
+        <div class="search-container">
+          <input type="text" id="userSearchInput" placeholder="Search user by name..." />
+          <div id="noUserFoundMessage" style="display: none; color: red; font-weight: bold;">
+            No user found 
+          </div>
+          
+        </div>
+
+        <div class="button-group">
+           <select id="year">
+            <!-- Years will be populated dynamically -->
+          </select>
+          <select id="month">
+    <option value="jan">January</option>
+    <option value="feb">February</option>
+    <option value="mar">March</option>
+    <option value="apr">April</option>
+    <option value="may">May</option>
+    <option value="jun">June</option>
+    <option value="jul">July</option>
+    <option value="aug">August</option>
+    <option value="sep">September</option>
+    <option value="oct">October</option>
+    <option value="nov">November</option>
+    <option value="dec">December</option>
+</select>
+
+          <button id="generateTimesheetPivot">📊 All Users Timesheet</button>
+          <button id="generateDailyPivot">🗓️ All Users Dailysheet</button>
+        </div>
+
+        <div id="container" class="all-users-container"></div>
+        <div class="user-container" id="userDropdownContainer"></div>
+      </section>
+
+     
+<div id="analyticsModal" style="display:none; position:fixed; top:10%; left:10%; width:80%; background:white; border:1px solid #ccc; padding:20px; box-shadow:0 0 10px #000; overflow-y:auto; max-height:80vh;">
+  <h2>Previous Day Incomplete Timesheets</h2>
+
+  <table border="1" width="100%" id="incompleteTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Hours</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Incomplete user list will be inserted here -->
+    </tbody>
+  </table>
+
+  <button onclick="document.getElementById('analyticsModal').style.display='none'">Close</button>
+</div>
+
+
+
+    
+      <div class="modal" id="logoutModal">
+        <div class="modal-content">
+          <div class="lock-icon-wrapper">
+            🔒
+          </div>
+          <h2 class="modal-heading">Logout Confirmation</h2>
+          <p class="modal-subtext">Are you sure you want to logout?</p>
+          <button onclick="confirmLogout()">✅ Yes, Logout</button>
+          <button onclick="closeLogoutModal()" class="cancel-btn">❌ Cancel</button>
+        </div>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.full.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+      <script src="admin_dashboard.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,118 @@
+pattern,response
+Who is the gm?,Our Gm is Mr Manu San.
+gm,Our Gm is Mr Manu San.
+Gm,Our Gm is Mr Manu San.
+
+
+
+Tell me all communication protocols,Communication protocols are classified into different categories based on their application domains data transfer methods and network types. Automotive communication protocols include CAN which is reliable for real-time communication LIN which is cost-effective for non-critical subsystems FlexRay which is high-speed and fault-tolerant for safety-critical applications MOST used for multimedia systems Automotive Ethernet for high-bandwidth networks and K-Line which is an older protocol for diagnostics. Industrial communication protocols include Modbus for simple serial communication PROFIBUS and PROFINET for industrial automation EtherCAT for high-performance Ethernet DeviceNet using CAN and CC-Link for Mitsubishi automation devices. Computer network protocols include TCP/IP for internet communication UDP for faster but less reliable data transfer HTTP/HTTPS for web communication FTP for file transfers DNS for resolving domain names and DHCP for dynamic IP address allocation. Wireless communication protocols include Wi-Fi for networking Bluetooth for short-range communication Zigbee for IoT applications LoRa for long-range IoT NFC for contactless transactions and 5G 4G and 3G for mobile networks. Serial communication protocols include UART for simple serial transfer SPI for fast synchronous communication I2C for multi-device communication RS-232 for legacy serial communication and RS-485 for longer distances. Embedded system communication protocols include JTAG for debugging SWD for ARM-based debugging and 1-Wire for sensor communication. Storage and peripheral communication protocols include USB for connecting devices SATA for data transfer between storage devices PCIe for high-speed GPU and SSD communication and MIPI for mobile displays and cameras.
+what is bsw in autosar,BSW (Basic Software) is the low-level software layer in AUTOSAR that provides essential services hardware abstraction and communication interfaces for ECU software. It acts as a bridge between the hardware (MCU) and the application layer ensuring standardized and reusable software components across different automotive projects.
+what is bit shifting,Bit shifting is an operation that moves the bits of a binary number left or right by a specified number of positions. It is used in programming for tasks like multiplication division and optimizing calculations at the hardware level.
+DaVinci Configurator Developer, DaVinci Configurator Developer is a configuration and generation tool from Vector Informatik used for AUTOSAR ECU software development. It is primarily used to configure and integrate AUTOSAR Basic Software (BSW) modules in AUTOSAR Classic Platform projects.
+what is Autosar,AUTOSAR is a global standard for automotive software architecture that provides a framework for developing scalable modular and reusable ECU software. It is used by OEMs (e.g. BMW Volkswagen Toyota) and Tier-1 suppliers to improve software quality portability and maintainability in automotive ECUs.
+what is CAN or can prorocol ,CAN (Controller Area Network) is a robust high-speed communication protocol used in automotive industrial and embedded systems for real-time data exchange between Electronic Control Units (ECUs). It was developed by Bosch in the 1980s and is standardized as ISO 11898
+what is Aspice,ASPICE (Automotive SPICE - Software Process Improvement and Capability dEtermination) is a process assessment model used in the automotive industry to ensure high-quality software development for ECUs (Electronic Control Units). It is based on ISO/IEC 15504 (SPICE) and is widely adopted by OEMs
+what is catia,CATIA (Computer-Aided Three-dimensional Interactive Application) is a 3D CAD (Computer-Aided Design) software developed by Dassault SystÃ¨mes. It is widely used in aerospace automotive industrial design and engineering for product design simulation and manufacturing.
+what is canoe,CANoe is a development testing and simulation tool from Vector Informatik used for working with automotive communication networks including CAN LIN FlexRay Ethernet and AUTOSAR systems. It is widely used in embedded software development especially for ECU (Electronic Control Unit) testing.
+what is tessy,TESSY is a unit testing tool for embedded software developed by Razorcat. It is primarily used for automated unit testing of C and C++ code in embedded systems helping developers verify software components at the function level.
+which coding language is mostly used here, C  C++
+HIL, Hardware in loop
+SIL, Software in loop
+
+hi,Hello! Welcome to MineBeaMitsumi Chat Bot How can I assist you today?
+hy,Hello! Welcome to MineBeaMitsumi Chat Bot How can I assist you today?
+hello,Hello! Welcome to MineBeaMitsumi Bot How can I assist you today?
+hey,Hello! Welcome to MineBeaMitsumi Bot How can I assist you today?
+good morning,Good morning! How can I assist you?
+good afternoon,Good afternoon! What do you need help with?
+good evening,Good evening! How can I be of service?
+how are you?,"I'm just a bot, but I'm doing great! How about you?"
+how are you,"I'm just a bot, but I'm doing great! How about you?"
+who is the software development team lead?, Mr Yash San is the TL of software devlopment team.
+who is the software development team lead, Mr Yash San is the TL of software devlopment team.
+who is the software TL?,Mr Yash San is the TL of software devlopment team.
+who is the software testing team lead?,Mr Abhay San is the TL of software testing team.
+who is the software testing team lead,Mr Abhay San is the TL of software testing team.
+what's up?,Not much! Just here to assist you. What can I do for you?
+office location,We are located at [Your Office Address].
+where is the office located?,We are located at [Your Office Address].
+ Vineet Kumar , Mr Vineet Kumar is the Test Manager and Testing Techinical head in U-Shin.He handles all the projects from Germany team.
+Who is the Testing Techinical head, Mr Vineet Kumar is the Test Manager and Testing Techinical head in U-Shin.He handles all the projects from Germany team.
+is there a cafeteria in the office?,"Yes, we have a cafeteria on the ground floor."
+what's the wifi password?,Please check with IT support or refer to the company notice board.
+how can i change my team, Discuss this with the higher nanagment.
+book meeting room,You can book a meeting room using the Office Space Management system.
+how do I book a meeting room?,You can book a meeting room using the Office Space Management system.
+apply leave,You can apply for leave through the HR portal.
+how do I apply for leave?,You can apply for leave through the EW portal.
+who is the HR manager?,Our HR manager is [Mr Narender Dagar]. You can contact them at [Email/Phone].
+employee handbook,You can find the employee handbook on the company intranet.
+where can I find the employee handbook?,You can find the employee handbook on the company intranet.
+computer slow,"Try restarting your computer. If the issue persists, contact IT support."
+my computer is slow,"Try restarting your computer. If the issue persists, contact IT support."
+reset email password,Go to the IT portal and select 'Reset Password'.
+how do I reset my email password?,Go to the IT portal and select 'Reset Password'.
+outlook issue,"Try restarting the application. If the issue persists, contact IT support."
+outlook is not working,"Try restarting the application. If the issue persists, contact IT support."
+VPN,You can find VPN connection instructions on the IT support page.
+how do I connect to the VPN?,You can find VPN connection instructions on the IT support page.
+printer issue,"Check if it's powered on and connected. If the issue persists, contact IT support."
+printer is not working,"Check if it's powered on and connected. If the issue persists, contact IT support."
+request software,You can submit a software request through the IT service portal.
+how do I request new software?,You can submit a software request through the IT service portal.
+salary slip,You can access your salary slip on the EW portal.
+how do I check my salary slip?,You can access your salary slip on the EW portal.
+update bank details,You need to update them through the HR portal.
+how do I update my bank details?,You need to update them through the HR portal.
+raise complaint,You can raise a complaint through email and the HR Employewise portal.
+how do I raise a complaint?,You can raise a complaint through email and the HR Employewise portal.
+CEO,Our CEO is [CEO Name].
+who is the CEO of the company?,Our CEO is [CEO Name].
+company vision,Our vision is [Company Vision Statement].
+what is the vision of our company?,Our vision is [Company Vision Statement].
+company ID card,Contact HR or the administration department for ID card issuance.
+how do I get a company ID card?,Contact HR or the administration department for ID card issuance.
+lost ID card,Report it immediately to HR and request a replacement.
+lost my id card,Report it immediately to HR and request a replacement.
+id card lost,Report it immediately to HR and request a replacement.
+what should I do if I lose my ID card?,Report it immediately to HR and request a replacement.
+office access after hours,You need special authorization from the admin team.
+how do I access the office after hours?,You need special authorization from the admin team.
+improve productivity,"Plan your day, prioritize tasks, and avoid distractions."
+how can I improve productivity?,"Plan your day, prioritize tasks, and avoid distractions."
+time management tips,"Use a to-do list, set deadlines, and take short breaks."
+what are some good time management tips?,"Use a to-do list, set deadlines, and take short breaks."
+stay focused,"Avoid multitasking, take breaks, and keep a clean workspace."
+how do I stay focused at work?,"Avoid multitasking, take breaks, and keep a clean workspace."
+handle work stress,"Take short breaks, practice deep breathing, and talk to someone if needed."
+how do I handle work stress?,"Take short breaks, practice deep breathing, and talk to someone if needed."
+joke,Why are foreigners more advanced?
+why?, they keep work in mind and other things on ****.
+favorite superhero,I admire Iron Man for his intelligence and innovation!
+who is your favorite superhero?,I admire Iron Man for his intelligence and innovation!
+favorite color,I like blue. What about you?
+dance,"Not yet, but I can tell you a great dance move!"
+can you dance?,"Not yet, but I can tell you a great dance move!"
+bye,Goodbye! Have a great day!
+goodbye,Goodbye! Have a great day!
+see you,See you later!
+thank you,You're welcome!
+thanks,Happy to help!
+how to install conan?, Follow this link and find the instructions here ->http://10.176.250.191:8080/cb/wiki/5775639
+how to install conan,Follow this link and find the instructions here -> http://10.176.250.191:8080/cb/wiki/5775639
+how to install python?,Follow this link and find the instructions here-> http://10.176.250.191:8080/cb/wiki/5775347
+how to install python,Follow this link and find the instructions here-> http://10.176.250.191:8080/cb/wiki/5775347
+how to setup git project?,Follow this link and find the instructions here-> http://10.176.250.191:8080/cb/wiki/5919002
+software team lead , Yash san is the software team lead.
+testing team lead , Abhay san is the testing team lead.
+
+What are the office hours?, The office will operate from 8 AM to 7 PM allowing employees the flexibility to begin their workday as early as 8 AM and to arrive until 10.30 AM. Should any employee fail to complete the required          8.5 hours of work the system will automatically classify their attendance as a half day and for the work from the office requests for past attendance will not be permitted.
+WHAT ARE THE OFFICE HOURS?, The office will operate from 8 AM to 7 PM allowing employees the flexibility to begin their workday as early as 8 AM and to arrive until 10.30 AM. Should any employee fail to complete the required          8.5 hours of work the system will automatically classify their attendance as a half day and for the work from the office requests for past attendance will not be permitted.
+What are the office hours, The office will operate from 8 AM to 7 PM allowing employees the flexibility to begin their workday as early as 8 AM and to arrive until 10.30 AM. Should any employee fail to complete the required          8.5 hours of work the system will automatically classify their attendance as a half day and for the work from the office requests for past attendance will not be permitted.
+office the hours? are What, The office will operate from 8 AM to 7 PM allowing employees the flexibility to begin their workday as early as 8 AM and to arrive until 10.30 AM. Should any employee fail to complete the required          8.5 hours of work the system will automatically classify their attendance as a half day and for the work from the office requests for past attendance will not be permitted.
+What Are The Office Hours?, The office will operate from 8 AM to 7 PM allowing employees the flexibility to begin their workday as early as 8 AM and to arrive until 10.30 AM. Should any employee fail to complete the required          8.5 hours of work the system will automatically classify their attendance as a half day and for the work from the office requests for past attendance will not be permitted.
+OFFICE?, The office will operate from 8 AM to 7 PM allowing employees the flexibility to begin their workday as early as 8 AM and to arrive until 10.30 AM. Should any employee fail to complete the required          8.5 hours of work the system will automatically classify their attendance as a half day and for the work from the office requests for past attendance will not be permitted.
+office?, The office will operate from 8 AM to 7 PM allowing employees the flexibility to begin their workday as early as 8 AM and to arrive until 10.30 AM. Should any employee fail to complete the required          8.5 hours of work the system will automatically classify their attendance as a half day and for the work from the office requests for past attendance will not be permitted.
+what are the office hours?, The office will operate from 8 AM to 7 PM allowing employees the flexibility to begin their workday as early as 8 AM and to arrive until 10.30 AM. Should any employee fail to complete the required          8.5 hours of work the system will automatically classify their attendance as a half day and for the work from the office requests for past attendance will not be permitted.
+How do I apply for leave, From Employwise Portal you can apply for leave
+how can i take wfh or work from home, If you are a intern WFH is not allowed for employees you can take wfh accoding to the roster

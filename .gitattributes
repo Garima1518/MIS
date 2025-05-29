@@ -1,0 +1,2 @@
+Management_tool/node_modules/electron/dist/electron.exe filter=lfs diff=lfs merge=lfs -text
+Management_tool/dist/management_tool-win32-x64/management_tool.exe filter=lfs diff=lfs merge=lfs -text
